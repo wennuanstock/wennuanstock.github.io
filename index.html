@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Stock Catalog</title><meta name="robots" content="noindex"><link rel="stylesheet" href="style.css"></head><body>
+<header class="top"><div class="topin"><div><div class="eyebrow" data-i="brand"></div><h1 data-i="title"></h1><p data-i="sub"></p></div><button id="langBtn" class="lang">中文</button></div></header>
+<main id="viewCat"><div class="toolbar"><div class="search"><input id="q" data-ph="search"></div>
+<select id="filter" class="select"><option value="instock" selected data-i="fInstock"></option><option value="ok" data-i="fOk"></option><option value="low" data-i="fLow"></option><option value="pending" data-i="fPending"></option><option value="out" data-i="fOut"></option><option value="all" data-i="fAll"></option></select>
+<select id="sort" class="select"><option value="qtydesc" selected data-i="sQtyDesc"></option><option value="qtyasc" data-i="sQtyAsc"></option><option value="id" data-i="sId"></option></select>
+<button id="clear" class="btn" data-i="reset"></button></div>
+<div id="cats" class="cats"></div>
+<div class="summary"><div class="metric" data-f="all"><b id="total">0</b><span data-i="mTotal"></span></div><div class="metric" data-f="instock"><b id="stock">0</b><span data-i="mStock"></span></div><div class="metric" data-f="ok"><b id="ready">0</b><span data-i="mReady"></span></div><div class="metric"><b id="count">0</b><span data-i="mCount"></span></div></div>
+<div class="layout"><section><div id="grid" class="grid"></div></section>
+<aside class="drawer"><h3><span data-i="list"></span> <span id="pickedCount">0</span> <span data-i="styles"></span></h3><div class="sumline"><span><span data-i="totalQty"></span>: <b id="pickedTotal">0</b></span><button id="clearList" class="linkbtn" data-i="clear"></button></div>
+<div id="picked" class="picked"></div><input id="cust" class="cust" data-ph="cust"><button id="export" class="btn primary" style="width:100%;margin-top:10px" data-i="export"></button><p class="note" data-i="note"></p></aside></div></main>
+<footer class="foot" data-i="src"></footer>
+<div id="detail" class="detail"><div id="detailContent" class="dialog"></div></div><div id="toast" class="toast"></div>
+<script src="exceljs.min.js"></script><script src="app.js"></script></body></html>
