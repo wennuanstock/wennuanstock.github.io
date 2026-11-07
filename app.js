@@ -45,7 +45,7 @@ const catName=c=>(CATS[c]||{})[lang]||c;
 const byKey=k=>DATA.find(x=>x.key===k);
 let picked=JSON.parse(localStorage.getItem('inv_picked')||'[]').filter(p=>byKey(p.key));
 let moves=[];
-let curCat='';
+let curCat=Object.keys(CATS)[0];
 function saveP(){localStorage.setItem('inv_picked',JSON.stringify(picked))}
 function saveM(){localStorage.setItem('inv_moves',JSON.stringify(moves))}
 function netMove(k){return moves.reduce((s,m)=>m.key===k?s+(m.type==='in'?m.n:-m.n):s,0)}
@@ -64,12 +64,7 @@ function applyLang(){
 }
 function renderCats(){
   const f=$('#filter').value, inC={}; DATA.filter(x=>match(x,f)).forEach(x=>inC[x.cat]=(inC[x.cat]||0)+1);
-  $('#cats').innerHTML=Object.keys(CATS).map(c=>{
-    const thumb=DATA.find(x=>x.cat===c&&inStock(x)&&x.image)||DATA.find(x=>x.cat===c&&x.image);
-    return `<button class="chip ${curCat===c?'on':''}" onclick="setCat('${esc(c)}')" aria-label="${esc(catName(c))}">${thumb?`<img src="${thumb.image}" alt="" loading="lazy">`:'<span class="cat-placeholder">+</span>'}<span class="cat-title">${esc(catName(c))}</span><span class="cat-count">${inC[c]||0} ${t('styles')}</span></button>`
-  }).join('');
-  $('#viewCat').classList.toggle('no-category',!curCat);
-  $('#categoryPrompt').textContent=lang==='en'?'Select a category to explore in-stock styles.':'请先选择分类，再浏览该类现货款式。';
+  $('#cats').innerHTML=Object.keys(CATS).map(c=>`<button class="chip ${curCat===c?'on':''}" onclick="setCat('${esc(c)}')">${esc(catName(c))} <i>${inC[c]||0}</i></button>`).join('');
 }
 function setCat(c){if(!Object.prototype.hasOwnProperty.call(CATS,c))return;curCat=c;$('#q').value='';renderCats();render()}
 function render(){
@@ -82,7 +77,7 @@ function render(){
   $('#total').textContent=curCat?DATA.filter(x=>x.cat===curCat).length:0;
   $('#stock').textContent=curCat?DATA.filter(x=>x.cat===curCat&&inStock(x)).length:0;
   $('#ready').textContent=curCat?DATA.filter(x=>x.cat===curCat&&status(x)==='ok').length:0;
-  $('#grid').innerHTML=!curCat?'':a.map(x=>{const p=picked.find(p=>p.key===x.key),st=status(x),s=stockOf(x);
+  $('#grid').innerHTML=a.map(x=>{const p=picked.find(p=>p.key===x.key),st=status(x),s=stockOf(x);
     return `<article class="card ${inStock(x)?'':'dim'}"><div class="pic" onclick="detail('${x.key}')">${x.image?`<img src="${x.image}" alt="${esc(x.id)}" loading="lazy">`:'<div class="placeholder">＋</div>'}${p?`<span class="badge">${t('picked')} ${p.n}</span>`:''}<span class="catb">${esc(catName(x.cat))}</span></div>
     <div class="body"><div class="line"><b class="id">${esc(x.id)}</b><span class="status s-${st}">${stLabel(st)}</span></div>
     <div class="meta"><span class="tag strong">${t('stock')} ${esc(showQty(x)||t('unset'))}</span>${x.size?`<span class="tag">${t('size')} ${esc(x.size)}</span>`:''}${x.base?`<span class="tag">${t('base')} ${esc(x.base)}</span>`:''}</div>

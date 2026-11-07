@@ -8,22 +8,9 @@
 .topin{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}.lang{border:1px solid #ffffff60;background:#ffffff1a;color:#fff;border-radius:99px;padding:8px 16px;cursor:pointer;font-weight:700;font-size:13px}
 .tabs{max-width:1420px;margin:18px auto 0;display:flex;gap:8px}.tab{border:1px solid #dfe4eb;background:#fff;border-radius:10px;padding:10px 18px;cursor:pointer;font-size:14px;font-weight:700;color:#596579}.tab.on{background:#203b68;color:#fff;border-color:#203b68}
 .cats{max-width:1420px;margin:0 auto 16px;display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid #dfe4eb;background:#fff;border-radius:99px;padding:7px 14px;cursor:pointer;font-size:13px;color:#33415a}.chip i{font-style:normal;color:#8b95a4;margin-left:4px}.chip.on{background:#203b68;color:#fff;border-color:#203b68}.chip.on i{color:#bdd0e8}
-/* Category-first client catalog: no cross-category All view. */
-#viewCat.no-category .toolbar,#viewCat.no-category .summary,#viewCat.no-category .layout{display:none}
-.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:14px;margin-top:18px}
-.cats .chip{padding:0;border-radius:14px;overflow:hidden;text-align:left;box-shadow:0 8px 24px #26365312;display:flex;flex-direction:column;background:#fff}
-.cats .chip img,.cats .chip .cat-placeholder{display:block;width:100%;height:135px;object-fit:contain;background:#fff}
-.cats .chip .cat-placeholder{display:grid;place-items:center;color:#b3bdc9;font-size:36px}
-.cats .chip .cat-title{display:block;padding:9px 12px 2px;font-weight:700;font-size:13px;line-height:1.4;min-height:48px}
-.cats .chip .cat-count{padding:0 12px 10px;color:#6b7686;font-size:12px}
-.cats .chip.on{background:#203b68;color:#fff;border-color:#203b68}
-.cats .chip.on .cat-count{color:#c5d7ee}
-.category-prompt{max-width:1420px;margin:8px auto 22px;text-align:center;color:#596579;font-size:15px}
-#viewCat:not(.no-category) .category-prompt{display:none}
-#viewCat.no-category .cats{margin-top:24px}
+/* Keep all named category chips; the broad All category is intentionally absent. */
 #viewCat .card .pic{background:#fff}
 #viewCat .card .pic img{object-fit:contain}
-@media(max-width:700px){.cats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.cats .chip img,.cats .chip .cat-placeholder{height:116px}}
 .rec{max-width:1420px;margin:18px auto;display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px}.panel{background:#fff;border:1px solid #e3e7ee;border-radius:16px;padding:18px;box-shadow:0 12px 32px #26365310}.panel h3{margin:0 0 12px}.fl{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font-size:12px;color:#596579}.fl input,.fl select{border:1px solid #dfe4eb;border-radius:8px;padding:9px 10px;font-size:14px;background:#fff}
 .seg{display:flex;gap:6px}.seg select{flex:1}.hint{display:flex;gap:10px;align-items:center;font-size:13px;min-height:10px;margin-bottom:10px}.hint img{width:52px;height:52px;object-fit:cover;border-radius:8px}
 .qbar{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}.qbar .fl{margin:0}.qbar .kw{flex:1;min-width:180px}.rsum{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}.rsum div{background:#f5f7fa;border-radius:10px;padding:8px 14px;font-size:12px;color:#596579}.rsum b{display:block;font-size:18px;color:#182235}
