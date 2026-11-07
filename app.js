@@ -63,26 +63,31 @@ function applyLang(){
   renderCats();render();
 }
 function renderCats(){
-  const counts={};DATA.forEach(x=>counts[x.cat]=(counts[x.cat]||0)+1);
-  const f=$('#filter').value;const inC={};DATA.filter(x=>match(x,f)).forEach(x=>inC[x.cat]=(inC[x.cat]||0)+1);
-  $('#cats').innerHTML=`<button class="chip ${curCat===''?'on':''}" onclick="setCat('')">${t('allCat')} <i>${DATA.filter(x=>match(x,f)).length}</i></button>`+
-  Object.keys(CATS).map(c=>`<button class="chip ${curCat===c?'on':''}" onclick="setCat('${esc(c)}')">${esc(catName(c))} <i>${inC[c]||0}</i></button>`).join('');
+  const f=$('#filter').value, inC={}; DATA.filter(x=>match(x,f)).forEach(x=>inC[x.cat]=(inC[x.cat]||0)+1);
+  $('#cats').innerHTML=Object.keys(CATS).map(c=>{
+    const thumb=DATA.find(x=>x.cat===c&&inStock(x)&&x.image)||DATA.find(x=>x.cat===c&&x.image);
+    return `<button class="chip ${curCat===c?'on':''}" onclick="setCat('${esc(c)}')" aria-label="${esc(catName(c))}">${thumb?`<img src="${thumb.image}" alt="" loading="lazy">`:'<span class="cat-placeholder">+</span>'}<span class="cat-title">${esc(catName(c))}</span><span class="cat-count">${inC[c]||0} ${t('styles')}</span></button>`
+  }).join('');
+  $('#viewCat').classList.toggle('no-category',!curCat);
+  $('#categoryPrompt').textContent=lang==='en'?'Select a category to explore in-stock styles.':'请先选择分类，再浏览该类现货款式。';
 }
-function setCat(c){curCat=c;renderCats();render()}
+function setCat(c){if(!Object.prototype.hasOwnProperty.call(CATS,c))return;curCat=c;$('#q').value='';renderCats();render()}
 function render(){
   const q=$('#q').value.toLowerCase().trim(),f=$('#filter').value,sort=$('#sort').value;
-  let a=DATA.filter(x=>(!curCat||x.cat===curCat)&&(!q||[x.id,x.qty,x.base,x.size,x.cat,catName(x.cat)].join(' ').toLowerCase().includes(q))&&match(x,f));
+  let a=DATA.filter(x=>curCat&&x.cat===curCat&&(!q||[x.id,x.qty,x.base,x.size,x.cat,catName(x.cat)].join(' ').toLowerCase().includes(q))&&match(x,f));
   if(sort==='qtydesc')a.sort((m,n)=>(stockOf(n)||0)-(stockOf(m)||0));
   else if(sort==='qtyasc')a.sort((m,n)=>(stockOf(m)||0)-(stockOf(n)||0));
   else a.sort((m,n)=>m.id.localeCompare(n.id,'zh',{numeric:true}));
   $('#count').textContent=a.length;
-  $('#grid').innerHTML=a.map(x=>{const p=picked.find(p=>p.key===x.key),st=status(x),s=stockOf(x);
+  $('#total').textContent=curCat?DATA.filter(x=>x.cat===curCat).length:0;
+  $('#stock').textContent=curCat?DATA.filter(x=>x.cat===curCat&&inStock(x)).length:0;
+  $('#ready').textContent=curCat?DATA.filter(x=>x.cat===curCat&&status(x)==='ok').length:0;
+  $('#grid').innerHTML=!curCat?'':a.map(x=>{const p=picked.find(p=>p.key===x.key),st=status(x),s=stockOf(x);
     return `<article class="card ${inStock(x)?'':'dim'}"><div class="pic" onclick="detail('${x.key}')">${x.image?`<img src="${x.image}" alt="${esc(x.id)}" loading="lazy">`:'<div class="placeholder">＋</div>'}${p?`<span class="badge">${t('picked')} ${p.n}</span>`:''}<span class="catb">${esc(catName(x.cat))}</span></div>
     <div class="body"><div class="line"><b class="id">${esc(x.id)}</b><span class="status s-${st}">${stLabel(st)}</span></div>
     <div class="meta"><span class="tag strong">${t('stock')} ${esc(showQty(x)||t('unset'))}</span>${x.size?`<span class="tag">${t('size')} ${esc(x.size)}</span>`:''}${x.base?`<span class="tag">${t('base')} ${esc(x.base)}</span>`:''}</div>
     <div class="qtyrow"><button class="step" onclick="step('${x.key}',-1)">−</button><input id="n-${x.key}" type="number" min="1" ${s>0?`max="${s}"`:''} value="${p?p.n:1}"><button class="step" onclick="step('${x.key}',1)">＋</button></div>
     <div class="action"><button class="add ${p?'selected':''}" onclick="pick('${x.key}')">${p?t('update'):t('add')}</button><button class="btn sm" onclick="detail('${x.key}')">${t('view')}</button></div></div></article>`}).join('')||`<div class="empty wide">${t('noMatch')}${f==='instock'?t('tryAll'):''}</div>`;
-  $('#total').textContent=DATA.length;$('#stock').textContent=DATA.filter(inStock).length;$('#ready').textContent=DATA.filter(x=>status(x)==='ok').length;
   update();
 }
 function step(k,d){const i=$('#n-'+k);i.value=Math.max(1,(parseInt(i.value)||1)+d)}
@@ -131,10 +136,10 @@ async function exportList(){
 }
 /* ---------- init ---------- */
 $('#q').oninput=render;$('#filter').onchange=()=>{renderCats();render()};$('#sort').onchange=render;
-$('#clear').onclick=()=>{$('#q').value='';$('#filter').value='instock';$('#sort').value='qtydesc';curCat='';renderCats();render()};
+$('#clear').onclick=()=>{$('#q').value='';$('#filter').value='instock';$('#sort').value='qtydesc';renderCats();render()};
 $('#clearList').onclick=()=>{if(picked.length&&confirm(t('clearConfirm'))){picked=[];saveP();render()}};
 $('#export').onclick=exportList;$('#detail').onclick=e=>{if(e.target.id==='detail')closeDetail()};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDetail()});
-document.querySelectorAll('.metric[data-f]').forEach(m=>m.onclick=()=>{$('#filter').value=m.dataset.f;renderCats();render()});
+document.querySelectorAll('.metric[data-f]').forEach(m=>m.onclick=()=>{if(!curCat)return;$('#filter').value=m.dataset.f;renderCats();render()});
 $('#langBtn').onclick=()=>{lang=lang==='en'?'zh':'en';localStorage.setItem('inv_lang',lang);applyLang();if($('#detail').classList.contains('open'))closeDetail()};
 applyLang();
